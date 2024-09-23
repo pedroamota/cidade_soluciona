@@ -20,7 +20,9 @@ class _MapPageState extends State<MapPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final description = TextEditingController();
   String searchTerm = '';
+  Color iconImg = Colors.grey;
   String? pathImage;
+  bool loading = true;
 
   void showPopUp(
     BuildContext context,
@@ -28,7 +30,7 @@ class _MapPageState extends State<MapPage> {
   ) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext context2) {
         return AlertDialog(
           backgroundColor: Colors.white,
           contentPadding: const EdgeInsets.all(30),
@@ -50,8 +52,16 @@ class _MapPageState extends State<MapPage> {
                   height: 30,
                 ),
                 IconButton(
-                  onPressed: pickAndUploadImage,
-                  icon: const Icon(Icons.photo),
+                  onPressed: () {
+                    pickAndUploadImage();
+                    setState(() {
+                      iconImg = Colors.green;
+                    });
+                  },
+                  icon: Icon(
+                    Icons.photo,
+                    color: iconImg,
+                  ),
                 ),
                 TextFormFieldComponent(
                   controller: description,
@@ -108,6 +118,9 @@ class _MapPageState extends State<MapPage> {
             .whenComplete(() {
           ServicesDB().getMakers(context);
         });
+        setState(() {
+          iconImg = Colors.grey;
+        });
         FocusNode().unfocus();
         Navigator.pop(context);
       } on AuthException catch (e) {
@@ -121,10 +134,11 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  pickAndUploadImage() async{
+  pickAndUploadImage() async {
     XFile? file = await getImage();
-    if(file != null){
+    if (file != null) {
       pathImage = file.path;
+      iconImg = Colors.green;
     }
   }
 
@@ -134,11 +148,31 @@ class _MapPageState extends State<MapPage> {
     return image;
   }
 
+  void showImageBottomSheet(BuildContext context, String path) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Permite que o BottomSheet ocupe mais espaço
+      builder: (context) {
+        return Container(
+          height:
+              MediaQuery.of(context).size.height * 0.5, // 50% da altura da tela
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(path), // Coloque a URL da sua imagem aqui
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final PositionService position =
         Provider.of<PositionService>(context, listen: false);
+        final markers = Provider.of<MarkersEntity>(context).markers;
 
     return Scaffold(
       body: Stack(
@@ -157,7 +191,7 @@ class _MapPageState extends State<MapPage> {
                 ),
                 zoom: 15,
               ),
-              markers: Provider.of<MarkersEntity>(context).markers,
+              markers: markers,
               onLongPress: (LatLng position) {
                 showPopUp(context, position);
               },

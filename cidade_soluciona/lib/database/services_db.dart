@@ -64,4 +64,9 @@ class ServicesDB {
     }).toSet(); // Convertendo para um Set de Markers, já que o GoogleMap usa um Set
     markersProvider.setMarkers(markers);
   }
+
+  Future<String> getImg(Marker marker) async{
+    final ref = await storage.ref('images/img-${marker.markerId}').getDownloadURL();
+    return ref;
+  }
 }
