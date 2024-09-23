@@ -1,10 +1,13 @@
 import 'package:cidade_soluciona/view/home/map_widget.dart';
+import 'package:cidade_soluciona/view/login/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/components_style.dart';
 import '../../database/services_db.dart';
+import '../../service/auth_service.dart';
 import '../../service/position_service.dart';
 
 class LocalPage extends StatefulWidget {
@@ -86,6 +89,18 @@ class _LocalPageState extends State<LocalPage> {
                 ),
               ),
             ),
+            const Spacer(),
+            IconButton(
+                icon: const Icon(Icons.logout_outlined),
+                onPressed: () {
+                  Provider.of<AuthService>(context, listen: false).logOut;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginPage(),
+                    ),
+                  );
+                })
           ],
         ),
       ),
