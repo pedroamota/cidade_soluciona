@@ -64,42 +64,6 @@ class ServicesDB {
     }
   }
 
-  saveLocal(double latitude, double longitude) async {
-    final userDocRef = db.collection('dados').doc('${auth.usuario!.email}');
-
-    await userDocRef.update({
-      'latitude': latitude,
-      'longitude': longitude,
-    });
-  }
-
-  //Usar em caso de erro
-  Future<List<dynamic>> _getEmails() async {
-    try {
-      // Referência ao documento do usuário
-      final userDocRef = FirebaseFirestore.instance
-          .collection('dados')
-          .doc(auth.usuario!.email);
-
-      // Obtendo os dados do documento
-      final userDocSnapshot = await userDocRef.get();
-
-      // Verifique se o documento existe antes de acessar a lista de amigos
-      if (userDocSnapshot.exists) {
-        // Obtenha a lista de amigos do documento
-        List<dynamic> friends = userDocSnapshot.data()!['friends'] ?? [];
-        return friends;
-      } else {
-        // Se o documento não existir, você pode lidar com isso de acordo com sua lógica
-        throw Exception('Documento do usuário não encontrado');
-      }
-    } catch (e) {
-      // Lidar com erros ou exceções aqui, se necessário
-      print('Erro ao buscar a lista de amigos: $e');
-      return [];
-    }
-  }
-
   void getLocalAlerts(context) async {
     final markers = Provider.of<MarkersEntity>(context, listen: false);
     Set<Marker> listMarkers = {};

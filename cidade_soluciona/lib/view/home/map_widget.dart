@@ -16,7 +16,20 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  Set<Marker> markers = {};
   String searchTerm = '';
+
+  void addMarker(LatLng position) {
+    final marker = Marker(
+      markerId: MarkerId(position.toString()),
+      position: position,
+      infoWindow: const InfoWindow(title: 'Você clicou aqui'),
+    );
+
+    setState(() {
+      markers.add(marker);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +41,9 @@ class _MapPageState extends State<MapPage> {
       body: Stack(
         children: [
           GoogleMap(
-            mapToolbarEnabled: true,
+            mapToolbarEnabled: false,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
             initialCameraPosition: CameraPosition(
               target: LatLng(
                 position.latitude,
@@ -36,7 +51,10 @@ class _MapPageState extends State<MapPage> {
               ),
               zoom: 15,
             ),
-            myLocationEnabled: true,
+            markers: markers,
+            onLongPress: (LatLng position) {
+              addMarker(position);
+            },
           ),
           Container(
             margin: const EdgeInsets.only(top: 30),

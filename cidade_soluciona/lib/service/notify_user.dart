@@ -6,7 +6,7 @@ class NotifyUser {
   static showScackbar(context, message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.red,
         content: Text(message),
       ),
     );
