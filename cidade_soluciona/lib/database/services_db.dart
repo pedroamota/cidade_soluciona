@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -57,18 +58,49 @@ class ServicesDB {
           doc['longitude'] as double,
         ),
         infoWindow: InfoWindow(
-            title: doc['name'],
-            onTap: (){
-              print('****************************************************');
-            } ),
+          title: doc['name'],
+          onTap: () async {
+            try {
+              String imageUrl = await getImg(doc.id);
+
+              // Exibir o BottomSheet com a imagem dinâmica
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) {
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height *
+                        0.6, // 50% da altura da tela
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              doc['name'],
+                              style: const TextStyle(fontSize: 22),
+                            ),
+                            const SizedBox(height: 20),
+                            Image.network(imageUrl)
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            } catch (e) {
+              print('Erro ao obter imagem: $e');
+            }
+          },
+        ),
       );
-    }).toSet(); // Convertendo para um Set de Markers, já que o GoogleMap usa um Set
+    }).toSet();
     markersProvider.setMarkers(markers);
   }
 
   Future<String> getImg(String id) async {
-    final ref =
-        await storage.ref('images/img-$id').getDownloadURL();
+    final ref = await storage.ref('images/img-$id').getDownloadURL();
     return ref;
   }
 }
