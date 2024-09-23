@@ -1,11 +1,11 @@
 import 'package:cidade_soluciona/view/home/map_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/components_style.dart';
 import '../../database/services_db.dart';
 import '../../service/position_service.dart';
-
 
 class LocalPage extends StatefulWidget {
   const LocalPage({super.key});
@@ -15,6 +15,14 @@ class LocalPage extends StatefulWidget {
 }
 
 class _LocalPageState extends State<LocalPage> {
+  Future<void> requestLocationPermission() async {
+    var status = await Permission.location.request();
+    if (status.isGranted) {
+      // Continue para carregar o mapa
+    } else if (status.isDenied || status.isPermanentlyDenied) {
+      // Trate a permissão negada
+    }
+  }
 
   getData() async {
     final db = ServicesDB();
@@ -24,6 +32,7 @@ class _LocalPageState extends State<LocalPage> {
 
   @override
   void initState() {
+    requestLocationPermission();
     getData();
     super.initState();
   }
@@ -71,11 +80,11 @@ class _LocalPageState extends State<LocalPage> {
                 child: const Text("MAPA"),
               ),
               onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MapPage(),
-                              ),
-                            ),
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MapPage(),
+                ),
+              ),
             ),
           ],
         ),
