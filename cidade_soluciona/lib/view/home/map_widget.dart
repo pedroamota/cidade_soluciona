@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/style_form_field.dart';
@@ -17,6 +21,7 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  final FirebaseStorage storage = FirebaseStorage.instance;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final description = TextEditingController();
   String searchTerm = '';
@@ -48,7 +53,10 @@ class _MapPageState extends State<MapPage> {
                 const SizedBox(
                   height: 30,
                 ),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.photo)),
+                IconButton(
+                  onPressed: pickAndUploadImage,
+                  icon: const Icon(Icons.photo),
+                ),
                 TextFormFieldComponent(
                   controller: description,
                   label: 'Descrição',
@@ -116,6 +124,25 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
+  pickAndUploadImage() async{
+    XFile? file = await getImage();
+    if(file != null){
+      await upload(file.path);
+    }
+  }
+
+  Future<XFile?> getImage() async {
+    final ImagePicker picker = ImagePicker();
+    XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    return image;
+  }
+
+  Future<void> upload(String path) async {
+    File file = File(path);
+    String ref = 'images/img-idDoMarker';
+    await storage.ref(ref).putFile(file);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -139,7 +166,7 @@ class _MapPageState extends State<MapPage> {
                 ),
                 zoom: 15,
               ),
-              markers:Provider.of<MarkersEntity>(context).markers,
+              markers: Provider.of<MarkersEntity>(context).markers,
               onLongPress: (LatLng position) {
                 showPopUp(context, position);
               },
