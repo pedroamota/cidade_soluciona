@@ -8,10 +8,4 @@ class MarkersEntity extends ChangeNotifier {
     markers = newList;
     notifyListeners();
   }
-
-  @override
-  void notifyListeners() {
-    // TODO: implement notifyListeners
-    super.notifyListeners();
-  }
 }

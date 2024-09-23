@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +13,7 @@ import 'DBFirestore.dart';
 
 class ServicesDB {
   late FirebaseFirestore db;
+  final FirebaseStorage storage = FirebaseStorage.instance;
 
   ServicesDB() {
     _startRepository();
@@ -25,14 +29,18 @@ class ServicesDB {
 
   //USUARIO
 
-  Future<void> saveMarker(String name, double latitude,
-      double longitude) async {
+  Future<void> saveMarker(
+      String name, double latitude, double longitude, String path) async {
     final userDocRef = db.collection('dados');
-    await userDocRef.add({
+    final result = await userDocRef.add({
       'name': name,
       'latitude': latitude,
       'longitude': longitude,
     });
+
+    File file = File(path);
+    String ref = 'images/img-${result.id}';
+    await storage.ref(ref).putFile(file);
   }
 
   void getMakers(context) async {

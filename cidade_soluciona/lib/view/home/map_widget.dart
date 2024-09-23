@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -21,10 +17,10 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  final FirebaseStorage storage = FirebaseStorage.instance;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final description = TextEditingController();
   String searchTerm = '';
+  String? pathImage;
 
   void showPopUp(
     BuildContext context,
@@ -107,6 +103,7 @@ class _MapPageState extends State<MapPage> {
           description.text,
           position.latitude,
           position.longitude,
+          pathImage!,
         )
             .whenComplete(() {
           ServicesDB().getMakers(context);
@@ -127,7 +124,7 @@ class _MapPageState extends State<MapPage> {
   pickAndUploadImage() async{
     XFile? file = await getImage();
     if(file != null){
-      await upload(file.path);
+      pathImage = file.path;
     }
   }
 
@@ -135,12 +132,6 @@ class _MapPageState extends State<MapPage> {
     final ImagePicker picker = ImagePicker();
     XFile? image = await picker.pickImage(source: ImageSource.gallery);
     return image;
-  }
-
-  Future<void> upload(String path) async {
-    File file = File(path);
-    String ref = 'images/img-idDoMarker';
-    await storage.ref(ref).putFile(file);
   }
 
   @override
