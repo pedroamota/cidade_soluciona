@@ -2,13 +2,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../models/makers.dart';
-import '../models/user.dart';
-import '../service/auth_service.dart';
 import 'DBFirestore.dart';
 
 class ServicesDB {
@@ -59,14 +56,19 @@ class ServicesDB {
           doc['latitude'] as double,
           doc['longitude'] as double,
         ),
-        infoWindow: InfoWindow(title: doc['name']),
+        infoWindow: InfoWindow(
+            title: doc['name'],
+            onTap: (){
+              print('****************************************************');
+            } ),
       );
     }).toSet(); // Convertendo para um Set de Markers, já que o GoogleMap usa um Set
     markersProvider.setMarkers(markers);
   }
 
-  Future<String> getImg(Marker marker) async{
-    final ref = await storage.ref('images/img-${marker.markerId}').getDownloadURL();
+  Future<String> getImg(String id) async {
+    final ref =
+        await storage.ref('images/img-$id').getDownloadURL();
     return ref;
   }
 }

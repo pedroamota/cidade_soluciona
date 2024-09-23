@@ -148,25 +148,6 @@ class _MapPageState extends State<MapPage> {
     return image;
   }
 
-  void showImageBottomSheet(BuildContext context, String path) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // Permite que o BottomSheet ocupe mais espaço
-      builder: (context) {
-        return Container(
-          height:
-              MediaQuery.of(context).size.height * 0.5, // 50% da altura da tela
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(path), // Coloque a URL da sua imagem aqui
-              fit: BoxFit.cover,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
