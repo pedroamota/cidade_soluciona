@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../models/makers.dart';
 import '../models/user.dart';
 import '../service/auth_service.dart';
-import '../service/notify_user.dart';
 import 'DBFirestore.dart';
 
 class ServicesDB {
@@ -27,19 +25,13 @@ class ServicesDB {
 
   //USUARIO
 
-  Future<void> saveUser(String name, String username, String phone) async {
+  Future<void> saveUser(String name) async {
     try {
       final userDocRef = db.collection('dados').doc('${auth.usuario!.email}');
       await userDocRef.set({
         'name': name,
-        'username': username,
-        'phone': phone,
-        'friends': [],
         'latitude': '',
         'longitude': '',
-        'help': '',
-        'msm': '',
-        'alert': false,
       });
       print('User data saved successfully.');
     } catch (e) {
@@ -58,86 +50,17 @@ class ServicesDB {
 
       if (userSnapshot.exists) {
         Map<String, dynamic> userData =
-            userSnapshot.data() as Map<String, dynamic>;
+        userSnapshot.data() as Map<String, dynamic>;
         user.name = userData['name'];
-        user.username = userData['username'];
-        user.telefone = userData['phone'];
-        user.friends = userData['friends'];
-        user.alert = userData['alert'];
-        user.help = userData['help'];
         user.latitude = userData['latitude'];
         user.longitude = userData['longitude'];
 
-        getLocalFriends(context);
+        getLocalAlerts(context);
       } else {
         print('Documento do usuário não encontrado.');
       }
     } catch (e) {
       print('Erro ao obter dados do usuário: $e');
-    }
-  }
-
-  addFriend(newEmail, context) async {
-    // Referência ao documento do usuário usando o email como ID
-    final userDocRef =
-        FirebaseFirestore.instance.collection('dados').doc(newEmail);
-
-    // Verifique se o documento com o email como ID existe
-    final docSnapshot = await userDocRef.get();
-
-    if (docSnapshot.exists) {
-      final userDocRef = db.collection('dados').doc('${auth.usuario!.email}');
-
-      DocumentSnapshot userSnapshot = await userDocRef.get();
-
-      if (userSnapshot.exists) {
-        List<dynamic> currentFriends = userSnapshot.get('friends') ?? [];
-
-        if (!currentFriends.contains(newEmail)) {
-          currentFriends.add(newEmail);
-
-          await userDocRef.update({
-            'friends': currentFriends,
-          });
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.blue,
-              content: Text('Amigo adicionado'),
-            ),
-          );
-        } else {
-          NotifyUser.showPopUp(context, 'Usuario já está na lista de amigos');
-        }
-      } else {
-        print('Documento do usuário não encontrado.');
-      }
-    } else {
-      NotifyUser.showPopUp(context, 'Usuario não existe');
-    }
-  }
-
-  Future<void> sendAlert(context, String msm, bool alert) async {
-    final user = Provider.of<Usuario>(context, listen: false);
-
-    try {
-      CollectionReference dadosCollection =
-          FirebaseFirestore.instance.collection('dados');
-
-      for (String email in user.friends) {
-        DocumentReference userDocRef = dadosCollection.doc(email);
-        Map<String, dynamic> updatedData = {
-          'alert': alert,
-          'help': user.name,
-          'msm': msm,
-        };
-        await userDocRef.update(updatedData);
-        print('Document for $email updated successfully.');
-      }
-
-      print('All documents updated.');
-    } catch (e) {
-      print('Error updating documents: $e');
     }
   }
 
@@ -147,30 +70,6 @@ class ServicesDB {
     await userDocRef.update({
       'latitude': latitude,
       'longitude': longitude,
-    });
-  }
-
-  //SEMPRE ATIVADAS
-
-  void listenToAlert(context) {
-    FirebaseFirestore.instance
-        .collection('dados')
-        .doc(auth.usuario!.email)
-        .snapshots()
-        .listen((snapshot) {
-      if (snapshot.exists) {
-        Map<String, dynamic> userData = snapshot.data() as Map<String, dynamic>;
-        bool alertStatus = userData['alert'] ?? false;
-        String msm = userData['msm'] ?? false;
-        String name = userData['help'] ?? false;
-        if (alertStatus) {
-          NotifyUser.showPopUp(context, '$name precisa de ajuda! $msm');
-        } else {
-          print('Alerta desativado.');
-        }
-      } else {
-        print('Documento do usuário não encontrado.');
-      }
     });
   }
 
@@ -201,12 +100,10 @@ class ServicesDB {
     }
   }
 
-  void getLocalFriends(context) async {
+  void getLocalAlerts(context) async {
     final markers = Provider.of<MarkersEntity>(context, listen: false);
     Set<Marker> listMarkers = {};
     List<dynamic> listEmails = [];
-
-    listEmails = Provider.of<Usuario>(context, listen: false).friends;
 
     for (dynamic email in listEmails) {
       final DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -227,31 +124,5 @@ class ServicesDB {
     }
 
     markers.setMarkers(listMarkers);
-  }
-
-  updatePhone(String phone, context) async {
-    try {
-      final userDocRef = db.collection('dados').doc('${auth.usuario!.email}');
-      await userDocRef.update({
-        'phone': phone,
-      }).whenComplete(
-          () => NotifyUser.showScackbar(context, 'Atualizado com sucesso'));
-      getData(context);
-    } catch (e) {
-      NotifyUser.showScackbar(context, 'Erro na atualização');
-    }
-  }
-
-  updateUser(String name, context) async {
-    try {
-      final userDocRef = db.collection('dados').doc('${auth.usuario!.email}');
-      await userDocRef.update({
-        'username': name,
-      }).whenComplete(
-          () => NotifyUser.showScackbar(context, 'Atualizado com sucesso'));
-      getData(context);
-    } catch (e) {
-      NotifyUser.showScackbar(context, 'Erro na atualização');
-    }
   }
 }

@@ -5,16 +5,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../database/services_db.dart';
 import '../../models/makers.dart';
 import '../../service/auth_service.dart';
-import 'position_service.dart';
+import '../../service/position_service.dart';
 
-class MapWidget extends StatefulWidget {
-  const MapWidget({super.key});
+class MapPage extends StatefulWidget {
+  const MapPage({super.key});
 
   @override
-  State<MapWidget> createState() => _MapWidgetState();
+  State<MapPage> createState() => _MapPageState();
 }
 
-class _MapWidgetState extends State<MapWidget> {
+class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -23,23 +23,19 @@ class _MapWidgetState extends State<MapWidget> {
 
     final db = ServicesDB(auth: auth);
     db.saveLocal(position.latitude, position.longitude);
-    db.getLocalFriends(context);
+    db.getLocalAlerts(context);
 
-    return Container(
-      width: size.width * .8,
-      height: size.height * .5,
-      color: Colors.white,
-      child: GoogleMap(
+    return const Scaffold(
+      body: GoogleMap(
         mapToolbarEnabled: false,
         initialCameraPosition: CameraPosition(
           target: LatLng(
-            position.latitude,
-            position.longitude,
+            -22.2491,
+            -45.7055,
           ),
-          zoom: 12,
+          zoom: 15,
         ),
         myLocationEnabled: true,
-        markers: Provider.of<MarkersEntity>(context, listen: false).markers,
       ),
     );
   }

@@ -5,7 +5,7 @@ import 'firebase_options.dart';
 import 'models/makers.dart';
 import 'models/user.dart';
 import 'service/auth_service.dart';
-import 'view/home/position_service.dart';
+import 'service/position_service.dart';
 import 'view/login/auth_widget.dart';
 
 void main() async {

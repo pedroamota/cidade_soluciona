@@ -7,7 +7,6 @@ import '../../components/style_form_field.dart';
 import '../../database/services_db.dart';
 import '../../main.dart';
 import '../../service/auth_service.dart';
-import '../login/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -20,8 +19,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final nameController = TextEditingController();
-  final phoneController = TextEditingController();
-  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool loading = false;
 
@@ -39,8 +36,6 @@ class _RegisterPageState extends State<RegisterPage> {
         ServicesDB(auth: auth)
             .saveUser(
               nameController.text,
-              usernameController.text,
-              phoneController.text,
             )
             .whenComplete(
               () => Navigator.pushAndRemoveUntil(
