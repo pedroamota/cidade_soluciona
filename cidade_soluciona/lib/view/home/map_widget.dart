@@ -179,7 +179,7 @@ class _MapPageState extends State<MapPage> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(top: 30),
+            margin: const EdgeInsets.only(top: 40),
             width: size.width, // Ocupa toda a largura da tela
             child: Row(
               children: [
