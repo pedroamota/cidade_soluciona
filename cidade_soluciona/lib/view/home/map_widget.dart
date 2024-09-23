@@ -15,6 +15,8 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  String searchTerm = '';
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -25,17 +27,67 @@ class _MapPageState extends State<MapPage> {
     db.saveLocal(position.latitude, position.longitude);
     db.getLocalAlerts(context);
 
-    return const Scaffold(
-      body: GoogleMap(
-        mapToolbarEnabled: false,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(
-            -22.2491,
-            -45.7055,
+    return Scaffold(
+      body: Stack(
+        children: [
+          const GoogleMap(
+            mapToolbarEnabled: false,
+            initialCameraPosition: CameraPosition(
+              target: LatLng(
+                -22.2491,
+                -45.7055,
+              ),
+              zoom: 15,
+            ),
+            myLocationEnabled: true,
           ),
-          zoom: 15,
-        ),
-        myLocationEnabled: true,
+          Container(
+            margin: const EdgeInsets.only(top: 30),
+            width: size.width, // Ocupa toda a largura da tela
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_outlined),
+                  onPressed: () {
+                    Navigator.pop(context); // Volta à tela anterior
+                  },
+                ),
+                Expanded(
+                  // Expande o TextField para ocupar o espaço restante
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Procurar localidade',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      filled: true,
+                      isDense: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchTerm = value.toLowerCase();
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
