@@ -37,7 +37,7 @@ class PositionService extends ChangeNotifier {
       longitude = position.longitude;
     } catch (e) {
       SnackBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.red,
         content: Text(e.toString()),
       );
     }

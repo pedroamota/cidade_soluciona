@@ -1,11 +1,34 @@
 import 'package:cidade_soluciona/view/home/map_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/components_style.dart';
+import '../../database/services_db.dart';
+import '../../service/auth_service.dart';
+import '../../service/position_service.dart';
 
 
-class LocalPage extends StatelessWidget {
+class LocalPage extends StatefulWidget {
   const LocalPage({super.key});
+
+  @override
+  State<LocalPage> createState() => _LocalPageState();
+}
+
+class _LocalPageState extends State<LocalPage> {
+
+  getData() async {
+    final auth = Provider.of<AuthService>(context, listen: false);
+    final db = ServicesDB(auth: auth);
+    Provider.of<PositionService>(context, listen: false).getPosition();
+    db.getData(context);
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -88,7 +88,7 @@ class AuthService extends ChangeNotifier {
             })
         .catchError((onError) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.red,
         content: const Text('Erro ao enviar codigo de recuperação'),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
