@@ -20,9 +20,8 @@ class _MapPageState extends State<MapPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final description = TextEditingController();
   String searchTerm = '';
-  Color iconImg = Colors.grey;
   String? pathImage;
-  bool loading = true;
+  //bool picked = false;
 
   void showPopUp(
     BuildContext context,
@@ -48,20 +47,22 @@ class _MapPageState extends State<MapPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(
-                  height: 30,
-                ),
                 IconButton(
                   onPressed: () {
                     pickAndUploadImage();
-                    setState(() {
-                      iconImg = Colors.green;
-                    });
+                    setState(() {});
                   },
-                  icon: Icon(
-                    Icons.photo,
-                    color: iconImg,
-                  ),
+                  icon: /*picked
+                      ? const Icon(
+                          Icons.check_box,
+                          color: Colors.green,
+                          size: 70,
+                        )
+                      : 
+                      */const Icon(
+                          Icons.photo,
+                          size: 70,
+                        ),
                 ),
                 TextFormFieldComponent(
                   controller: description,
@@ -118,9 +119,10 @@ class _MapPageState extends State<MapPage> {
             .whenComplete(() {
           ServicesDB().getMakers(context);
         });
+        /*
         setState(() {
-          iconImg = Colors.grey;
-        });
+          picked = false;
+        });*/
         FocusNode().unfocus();
         Navigator.pop(context);
       } on AuthException catch (e) {
@@ -138,7 +140,9 @@ class _MapPageState extends State<MapPage> {
     XFile? file = await getImage();
     if (file != null) {
       pathImage = file.path;
-      iconImg = Colors.green;
+      /*setState(() {
+        picked = true;
+      });*/
     }
   }
 
@@ -153,7 +157,7 @@ class _MapPageState extends State<MapPage> {
     final size = MediaQuery.of(context).size;
     final PositionService position =
         Provider.of<PositionService>(context, listen: false);
-        final markers = Provider.of<MarkersEntity>(context).markers;
+    final markers = Provider.of<MarkersEntity>(context).markers;
 
     return Scaffold(
       body: Stack(

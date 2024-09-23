@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:cidade_soluciona/view/home/local_page.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:provider/provider.dart';
@@ -41,6 +42,12 @@ class _LoginPageState extends State<LoginPage> {
               emailController.text,
               passwordController.text,
             );
+        Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LocalPage(),
+                              ),
+                            );
       } on AuthException catch (e) {
         setState(() {
           loading = false;
