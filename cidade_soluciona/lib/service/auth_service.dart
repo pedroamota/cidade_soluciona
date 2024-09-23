@@ -108,13 +108,12 @@ class AuthService extends ChangeNotifier {
 
   updateEmail(String newEmail, String password, context) async {
     try {
-      final auth = Provider.of<AuthService>(context, listen: false);
-      final db = ServicesDB(auth: auth);
+      final db = ServicesDB();
       await _auth.signInWithEmailAndPassword(
         email: usuario!.email!,
         password: password,
       );
-      db.getData(context);
+      db.getMakers(context);
       await _auth.currentUser!.updateEmail(newEmail).whenComplete(
           () => NotifyUser.showScackbar(context, 'Atualizado com sucesso'));
     } on FirebaseAuthException catch (e) {
@@ -126,15 +125,14 @@ class AuthService extends ChangeNotifier {
 
   updatePassword(String newPassword, String password, context) async {
     try {
-      final auth = Provider.of<AuthService>(context, listen: false);
-      final db = ServicesDB(auth: auth);
+      final db = ServicesDB();
       await _auth.signInWithEmailAndPassword(
         email: usuario!.email!,
         password: password,
       );
       await _auth.currentUser!.updatePassword(newPassword).whenComplete(
           () => NotifyUser.showScackbar(context, 'Atualizado com sucesso'));
-      db.getData(context);
+      db.getMakers(context);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
         throw AuthException(message: 'Antes faça login novamente');

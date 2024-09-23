@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -9,9 +10,8 @@ import 'DBFirestore.dart';
 
 class ServicesDB {
   late FirebaseFirestore db;
-  late AuthService auth;
 
-  ServicesDB({required this.auth}) {
+  ServicesDB() {
     _startRepository();
   }
 
@@ -25,68 +25,35 @@ class ServicesDB {
 
   //USUARIO
 
-  Future<void> saveUser(String name) async {
-    try {
-      final userDocRef = db.collection('dados').doc('${auth.usuario!.email}');
-      await userDocRef.set({
-        'name': name,
-        'latitude': '',
-        'longitude': '',
-      });
-      print('User data saved successfully.');
-    } catch (e) {
-      print('Error saving user data: $e');
-    }
+  Future<void> saveMarker(String name, double latitude,
+      double longitude) async {
+    final userDocRef = db.collection('dados');
+    await userDocRef.add({
+      'name': name,
+      'latitude': latitude,
+      'longitude': longitude,
+    });
   }
 
-  void getData(context) async {
-    final user = Provider.of<Usuario>(context, listen: false);
+  void getMakers(context) async {
+    final markersProvider = Provider.of<MarkersEntity>(context, listen: false);
 
-    try {
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('dados')
-          .doc(auth.usuario!.email)
-          .get();
+    final CollectionReference dadosRef = db.collection('dados');
 
-      if (userSnapshot.exists) {
-        Map<String, dynamic> userData =
-        userSnapshot.data() as Map<String, dynamic>;
-        user.name = userData['name'];
-        user.latitude = userData['latitude'];
-        user.longitude = userData['longitude'];
+// Buscando todos os documentos da coleção 'dados'
+    QuerySnapshot querySnapshot = await dadosRef.get();
 
-        getLocalAlerts(context);
-      } else {
-        print('Documento do usuário não encontrado.');
-      }
-    } catch (e) {
-      print('Erro ao obter dados do usuário: $e');
-    }
-  }
-
-  void getLocalAlerts(context) async {
-    final markers = Provider.of<MarkersEntity>(context, listen: false);
-    Set<Marker> listMarkers = {};
-    List<dynamic> listEmails = [];
-
-    for (dynamic email in listEmails) {
-      final DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('dados')
-          .doc(email) // Use o email como ID do documento
-          .get();
-
-      var aux = Marker(
-        markerId: MarkerId(doc['name']),
+// Mapeando os documentos Firestore para objetos Marker
+    Set<Marker> markers = querySnapshot.docs.map((doc) {
+      return Marker(
+        markerId: MarkerId(doc.id), // Usando o ID do documento como markerId
         position: LatLng(
           doc['latitude'] as double,
           doc['longitude'] as double,
         ),
         infoWindow: InfoWindow(title: doc['name']),
       );
-
-      listMarkers.add(aux);
-    }
-
-    markers.setMarkers(listMarkers);
+    }).toSet(); // Convertendo para um Set de Markers, já que o GoogleMap usa um Set
+    markersProvider.setMarkers(markers);
   }
 }

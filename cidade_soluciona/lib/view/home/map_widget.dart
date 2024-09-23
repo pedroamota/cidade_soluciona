@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/style_form_field.dart';
 import '../../database/services_db.dart';
@@ -19,7 +19,6 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final description = TextEditingController();
-  Set<Marker> markers = {};
   String searchTerm = '';
 
   void showPopUp(
@@ -95,8 +94,16 @@ class _MapPageState extends State<MapPage> {
   ) async {
     if (formKey.currentState!.validate()) {
       try {
+        ServicesDB()
+            .saveMarker(
+          description.text,
+          position.latitude,
+          position.longitude,
+        )
+            .whenComplete(() {
+          ServicesDB().getMakers(context);
+        });
         FocusNode().unfocus();
-        addMarker(position);
         Navigator.pop(context);
       } on AuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -109,18 +116,6 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  void addMarker(LatLng position) {
-    final marker = Marker(
-      markerId: MarkerId(position.toString()),
-      position: position,
-      infoWindow: InfoWindow(title: description.text),
-    );
-
-    setState(() {
-      markers.add(marker);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -130,7 +125,10 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       body: Stack(
         children: [
-          GoogleMap(
+          SizedBox(
+            height: size.height,
+            width: size.width,
+            child: GoogleMap(
               mapToolbarEnabled: false,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
@@ -141,10 +139,12 @@ class _MapPageState extends State<MapPage> {
                 ),
                 zoom: 15,
               ),
-              markers: markers,
+              markers:Provider.of<MarkersEntity>(context).markers,
               onLongPress: (LatLng position) {
                 showPopUp(context, position);
-              }),
+              },
+            ),
+          ),
           Container(
             margin: const EdgeInsets.only(top: 30),
             width: size.width, // Ocupa toda a largura da tela

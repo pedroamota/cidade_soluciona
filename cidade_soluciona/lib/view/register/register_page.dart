@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../components/components_style.dart';
 import '../../components/style_form_field.dart';
-import '../../database/services_db.dart';
 import '../../main.dart';
 import '../../service/auth_service.dart';
 
@@ -33,19 +32,13 @@ class _RegisterPageState extends State<RegisterPage> {
               emailController.text,
               passwordController.text,
             );
-        ServicesDB(auth: auth)
-            .saveUser(
-              nameController.text,
-            )
-            .whenComplete(
-              () => Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MyApp(),
-                ),
-                (Route<dynamic> route) => false,
-              ),
-            );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MyApp(),
+          ),
+          (Route<dynamic> route) => false,
+        );
       } on AuthException catch (e) {
         setState(() {
           loading = false;

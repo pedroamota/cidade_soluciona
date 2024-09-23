@@ -18,10 +18,9 @@ class LocalPage extends StatefulWidget {
 class _LocalPageState extends State<LocalPage> {
 
   getData() async {
-    final auth = Provider.of<AuthService>(context, listen: false);
-    final db = ServicesDB(auth: auth);
+    final db = ServicesDB();
     Provider.of<PositionService>(context, listen: false).getPosition();
-    db.getData(context);
+    db.getMakers(context);
   }
 
   @override

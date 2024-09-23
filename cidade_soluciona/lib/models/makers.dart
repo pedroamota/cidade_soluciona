@@ -6,5 +6,12 @@ class MarkersEntity extends ChangeNotifier {
 
   setMarkers(Set<Marker> newList) {
     markers = newList;
+    notifyListeners();
+  }
+
+  @override
+  void notifyListeners() {
+    // TODO: implement notifyListeners
+    super.notifyListeners();
   }
 }
