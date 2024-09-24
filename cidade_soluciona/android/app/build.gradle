@@ -42,6 +42,7 @@ flutter {
 // Dependências
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.10" // Usar uma versão disponível
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
 }
 
 // Configuração de resolução
