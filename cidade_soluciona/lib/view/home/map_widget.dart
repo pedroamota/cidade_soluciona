@@ -27,7 +27,6 @@ class _MapPageState extends State<MapPage> {
   GoogleMapController? mapController;
   String searchTerm = '';
   String? pathImage;
-  //bool picked = false;
 
   void moveToNewPosition(double lat, double lng) {
     mapController?.animateCamera(
@@ -62,20 +61,17 @@ class _MapPageState extends State<MapPage> {
                 IconButton(
                   onPressed: () {
                     pickAndUploadImage();
-                    setState(() {});
                   },
-                  icon: /*picked
+                  icon: Provider.of<PositionService>(context2).picked
                       ? const Icon(
                           Icons.check_box,
                           color: Colors.green,
                           size: 70,
                         )
-                      : 
-                      */
-                      const Icon(
-                    Icons.photo,
-                    size: 70,
-                  ),
+                      : const Icon(
+                          Icons.photo,
+                          size: 70,
+                        ),
                 ),
                 TextFormFieldComponent(
                   controller: description,
@@ -132,10 +128,7 @@ class _MapPageState extends State<MapPage> {
             .whenComplete(() {
           ServicesDB().getMakers(context);
         });
-        /*
-        setState(() {
-          picked = false;
-        });*/
+        Provider.of<PositionService>(context, listen: false).setPicked(false);
         FocusNode().unfocus();
         Navigator.pop(context);
       } on AuthException catch (e) {
@@ -153,9 +146,7 @@ class _MapPageState extends State<MapPage> {
     XFile? file = await getImage();
     if (file != null) {
       pathImage = file.path;
-      /*setState(() {
-        picked = true;
-      });*/
+      Provider.of<PositionService>(context, listen: false).setPicked(true);
     }
   }
 
