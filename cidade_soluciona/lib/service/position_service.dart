@@ -4,6 +4,12 @@ import 'package:geolocator/geolocator.dart';
 class PositionService extends ChangeNotifier {
   double latitude = -22.2491;
   double longitude = -45.7055;
+  bool picked = false;
+
+  void setPicked(bool value){
+    picked = value;
+    notifyListeners();
+  }
 
   Future<Position> _currentPosition() async {
     LocationPermission permission;
