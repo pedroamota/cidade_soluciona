@@ -81,7 +81,28 @@ class ServicesDB {
                               style: const TextStyle(fontSize: 22),
                             ),
                             const SizedBox(height: 20),
-                            Image.network(imageUrl)
+                            Image.network(
+                              imageUrl,
+                              fit: BoxFit.contain,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child; // Retorna a imagem quando carregada
+                                }
+                                return Container(
+                                  height: 200,
+                                  alignment: Alignment.center,
+                                  child: const CircularProgressIndicator(),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 200,
+                                  alignment: Alignment.center,
+                                  child: const Text('Erro ao carregar imagem'),
+                                );
+                              },
+                            ),
                           ],
                         ),
                       ),
