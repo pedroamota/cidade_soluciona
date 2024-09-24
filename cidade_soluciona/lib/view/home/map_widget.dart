@@ -71,7 +71,8 @@ class _MapPageState extends State<MapPage> {
                           size: 70,
                         )
                       : 
-                      */const Icon(
+                      */
+                      const Icon(
                     Icons.photo,
                     size: 70,
                   ),
@@ -216,9 +217,10 @@ class _MapPageState extends State<MapPage> {
                   child: GooglePlaceAutoCompleteTextField(
                     textEditingController: searchController,
                     googleAPIKey: "AIzaSyCFMsWVXk8t0RWh0IyL7gmgmGhz39ayO20",
-                    countries: ["br"], // optional by default null is set
+                    countries: const ["br"], // optional by default null is set
                     getPlaceDetailWithLatLng: (Prediction prediction) {
-                   moveToNewPosition(prediction.lat as double, prediction.lng as double);
+                      moveToNewPosition(
+                          prediction.lat as double, prediction.lng as double);
                     }, // this callback is called when isLatLngRequired is true
                     itemClick: (Prediction prediction) {
                       searchController.text = prediction.description!;
@@ -227,21 +229,18 @@ class _MapPageState extends State<MapPage> {
                     },
                     itemBuilder: (context, index, Prediction prediction) {
                       return Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: Row(
                           children: [
-                            Icon(Icons.location_on),
-                            SizedBox(
-                              width: 7,
-                            ),
-                            Expanded(
-                                child: Text("${prediction.description ?? ""}"))
+                            const Icon(Icons.location_on),
+                            const SizedBox(width: 7),
+                            Expanded(child: Text(prediction.description ?? ""))
                           ],
                         ),
                       );
                     },
                     // if you want to add seperator between list items
-                    seperatedBuilder: Divider(),
+                    seperatedBuilder: const Divider(),
                     // want to show close icon
                     isCrossBtnShown: true,
                     // optional container padding

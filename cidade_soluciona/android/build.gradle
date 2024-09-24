@@ -7,18 +7,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.2'  // Verifique se essa versão é compatível com seu projeto Flutter
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-buildscript {
-    ext.kotlin_version = '1.7.1'  // Defina a versão para 1.7.1
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.2'  // Verifique a versão correta do Gradle para seu projeto
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath("com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1")
     }
 }
 

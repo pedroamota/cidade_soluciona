@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class PositionService extends ChangeNotifier {
-  double latitude = -20.6142;
-  double longitude = -46.0465;
+  double latitude = -22.2491;
+  double longitude = -45.7055;
 
   Future<Position> _currentPosition() async {
     LocationPermission permission;
