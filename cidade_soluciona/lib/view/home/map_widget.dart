@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_places_flutter/model/place_type.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
 
 import '../../components/style_form_field.dart';
 import '../../database/services_db.dart';
@@ -19,9 +23,17 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final description = TextEditingController();
+  final searchController = TextEditingController();
+  GoogleMapController? mapController;
   String searchTerm = '';
   String? pathImage;
   //bool picked = false;
+
+  void moveToNewPosition(double lat, double lng) {
+    mapController?.animateCamera(
+      CameraUpdate.newLatLng(LatLng(lat, lng)),
+    );
+  }
 
   void showPopUp(
     BuildContext context,
@@ -60,9 +72,9 @@ class _MapPageState extends State<MapPage> {
                         )
                       : 
                       */const Icon(
-                          Icons.photo,
-                          size: 70,
-                        ),
+                    Icons.photo,
+                    size: 70,
+                  ),
                 ),
                 TextFormFieldComponent(
                   controller: description,
@@ -174,8 +186,11 @@ class _MapPageState extends State<MapPage> {
                   position.latitude,
                   position.longitude,
                 ),
-                zoom: 15,
+                zoom: 16,
               ),
+              onMapCreated: (GoogleMapController controller) {
+                mapController = controller; // Guarda o controlador do mapa
+              },
               markers: markers,
               onLongPress: (LatLng position) {
                 showPopUp(context, position);
@@ -194,34 +209,47 @@ class _MapPageState extends State<MapPage> {
                   },
                 ),
                 Expanded(
-                  // Expande o TextField para ocupar o espaço restante
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Procurar localidade',
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      filled: true,
-                      isDense: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: const BorderSide(color: Colors.transparent),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: const BorderSide(color: Colors.transparent),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: const BorderSide(color: Colors.transparent),
-                      ),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        searchTerm = value.toLowerCase();
-                      });
+                    // Expande o TextField para ocupar o espaço restante
+                    child: Container(
+                  color: Colors.white,
+                  height: size.height * .08,
+                  child: GooglePlaceAutoCompleteTextField(
+                    textEditingController: searchController,
+                    googleAPIKey: "AIzaSyCFMsWVXk8t0RWh0IyL7gmgmGhz39ayO20",
+                    countries: ["br"], // optional by default null is set
+                    getPlaceDetailWithLatLng: (Prediction prediction) {
+                   moveToNewPosition(prediction.lat as double, prediction.lng as double);
+                    }, // this callback is called when isLatLngRequired is true
+                    itemClick: (Prediction prediction) {
+                      searchController.text = prediction.description!;
+                      searchController.selection = TextSelection.fromPosition(
+                          TextPosition(offset: prediction.description!.length));
                     },
+                    itemBuilder: (context, index, Prediction prediction) {
+                      return Container(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            Icon(Icons.location_on),
+                            SizedBox(
+                              width: 7,
+                            ),
+                            Expanded(
+                                child: Text("${prediction.description ?? ""}"))
+                          ],
+                        ),
+                      );
+                    },
+                    // if you want to add seperator between list items
+                    seperatedBuilder: Divider(),
+                    // want to show close icon
+                    isCrossBtnShown: true,
+                    // optional container padding
+                    containerHorizontalPadding: 10,
+                    // place type
+                    placeType: PlaceType.geocode,
                   ),
-                ),
+                )),
                 const SizedBox(
                   width: 20,
                 )
