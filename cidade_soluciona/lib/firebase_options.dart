@@ -4,16 +4,6 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-/// Default [FirebaseOptions] for use with your Firebase apps.
-///
-/// Example:
-/// ```dart
-/// import 'firebase_options.dart';
-/// // ...
-/// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
-/// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -30,8 +20,7 @@ class DefaultFirebaseOptions {
         return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
+          'DefaultFirebaseOptions have not been configured for linux.',
         );
       default:
         throw UnsupportedError(
@@ -41,8 +30,8 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBt1yArf4eCkCunlp4Cno_DPzmXuEbHxng',
-    appId: '1:441660458336:web:58fa030c338262af4aca05',
+    apiKey: String.fromEnvironment('FIREBASE_WEB_API_KEY'),
+    appId: String.fromEnvironment('FIREBASE_WEB_APP_ID'),
     messagingSenderId: '441660458336',
     projectId: 'cidade-soluciona',
     authDomain: 'cidade-soluciona.firebaseapp.com',
@@ -51,16 +40,16 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCFMsWVXk8t0RWh0IyL7gmgmGhz39ayO20',
-    appId: '1:441660458336:android:e7f654f7eba10bcf4aca05',
+    apiKey: String.fromEnvironment('FIREBASE_ANDROID_API_KEY'),
+    appId: String.fromEnvironment('FIREBASE_ANDROID_APP_ID'),
     messagingSenderId: '441660458336',
     projectId: 'cidade-soluciona',
     storageBucket: 'cidade-soluciona.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDymPdBwevOuOUXz7aAQHYyTmeaJbh5yX0',
-    appId: '1:441660458336:ios:b616348aa87c3ea94aca05',
+    apiKey: String.fromEnvironment('FIREBASE_IOS_API_KEY'),
+    appId: String.fromEnvironment('FIREBASE_IOS_APP_ID'),
     messagingSenderId: '441660458336',
     projectId: 'cidade-soluciona',
     storageBucket: 'cidade-soluciona.appspot.com',
@@ -68,8 +57,8 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDymPdBwevOuOUXz7aAQHYyTmeaJbh5yX0',
-    appId: '1:441660458336:ios:b616348aa87c3ea94aca05',
+    apiKey: String.fromEnvironment('FIREBASE_MACOS_API_KEY'),
+    appId: String.fromEnvironment('FIREBASE_MACOS_APP_ID'),
     messagingSenderId: '441660458336',
     projectId: 'cidade-soluciona',
     storageBucket: 'cidade-soluciona.appspot.com',
@@ -77,8 +66,8 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBt1yArf4eCkCunlp4Cno_DPzmXuEbHxng',
-    appId: '1:441660458336:web:a127730d403b2d934aca05',
+    apiKey: String.fromEnvironment('FIREBASE_WINDOWS_API_KEY'),
+    appId: String.fromEnvironment('FIREBASE_WINDOWS_APP_ID'),
     messagingSenderId: '441660458336',
     projectId: 'cidade-soluciona',
     authDomain: 'cidade-soluciona.firebaseapp.com',
